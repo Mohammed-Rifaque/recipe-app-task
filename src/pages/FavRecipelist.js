@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import RecipeCard from "./RecipeCard";
 import "./style.css"; // Import the CSS file
-import { local } from "../helpers/projectHelpers.js";
+import { selectFavorites } from "../redux/slicers/recipeSlice.js";
+import { useSelector } from "react-redux";
 
 const FavRecipeList = () => {
- const favorites = local.get("favorites") || [];
+const favorites = useSelector(selectFavorites);
 
   return (
     <div className="fav-recipe-list-container">
