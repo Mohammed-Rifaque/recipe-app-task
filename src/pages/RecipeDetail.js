@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectFavorites, addToFavorites, removeFromFavorites } from '../redux/slicers/recipeSlice';
 import './style.css';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { local } from '../helpers/projectHelpers';
 
 const RecipeDetail = () => {
   const [recipeDetail, setRecipeDetail] = useState(null);
   const favorites = useSelector(selectFavorites);
+  const favoriteValues = local.get("favorites") || [];
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,9 +25,12 @@ const RecipeDetail = () => {
   const handleToggleFavorite = () => {
     if (recipeDetail) {
       if (isFavorite) {
+        const newFavorites = favoriteValues.filter((fav) => fav?.uri !== recipeDetail?.uri);
         dispatch(removeFromFavorites(recipeDetail));
+        local.set("favorites", newFavorites);
       } else {
         dispatch(addToFavorites(recipeDetail));
+        local.set("favorites", [...favoriteValues, recipeDetail]);
       }
     }
   };

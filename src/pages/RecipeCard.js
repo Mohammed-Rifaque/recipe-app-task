@@ -9,25 +9,32 @@ import {
   addToFavorites,
   removeFromFavorites,
   selectFavorites,
-  toggleFavorite,
 } from "../redux/slicers/recipeSlice";
+import { local } from "../helpers/projectHelpers";
 
 const RecipeCard = ({ recipe, loading }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [imageLoading, setImageLoading] = useState(true);
   const favorites = useSelector(selectFavorites);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const favoriteValues = local.get("favorites") || [];
+  const currentFavorite = favorites.find((fav) => fav?.uri === recipe?.uri);
 
-  const isFavorite = favorites.some((fav) => fav.uri === recipe.uri);
+  useEffect(() => {
+    setIsFavorite(currentFavorite ? true : false);
+  }, [currentFavorite]);
 
   const handleToggleFavorite = (e) => {
-    // Prevent event propagation to avoid navigation
     e.stopPropagation();
-
+    
     if (isFavorite) {
+      const newFavorites = favoriteValues.filter((fav) => fav?.uri !== recipe?.uri);
       dispatch(removeFromFavorites(recipe));
+      local.set("favorites", newFavorites);
     } else {
       dispatch(addToFavorites(recipe));
+      local.set("favorites", [...favoriteValues, recipe]);
     }
   };
 
