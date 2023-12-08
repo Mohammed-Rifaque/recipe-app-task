@@ -1,11 +1,11 @@
-
-import React from 'react';
-import './assets/css/style.css';
-import "./index.css"
-import MainRoutes from './routes';
-import { useRoutes } from 'react-router-dom';
+import React from "react";
+import "./assets/css/style.css";
+import "./index.css";
+import MainRoutes from "./routes";
+import { useRoutes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import LazyLoader from "./components/LazyLoader";
 
 const App = () => {
   const route = useRoutes(MainRoutes);
@@ -18,8 +18,10 @@ const App = () => {
   return (
     <div>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {route}
+          <LazyLoader>
+            <CssBaseline />
+            {route}
+          </LazyLoader>
       </ThemeProvider>
     </div>
   );

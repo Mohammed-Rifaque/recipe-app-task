@@ -1,56 +1,110 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import recipeSlice, { selectRecipes } from "../redux/slicers/recipeSlice";
 import { fetchRecipesApi } from "../api";
+import { selectRecipes } from "../redux/slicers/recipeSlice";
+import RecipeCard from "./RecipeCard";
+import FilterModal from "./Modal/FilterModal";
+import useDebouncedEffect from "../hooks/useDebouncedEffect";
+import { Skeleton, Stack } from "@mui/material";
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 const RecipeList = () => {
   const dispatch = useDispatch();
   const { recipes = [] } = useSelector(selectRecipes);
-  const [searchTerm, setSearchTerm] = useState("");
-console.log(recipes)
+
+  const nextUrl = recipes?._links?.next?.href || null
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [queries, setQueries] = useState({
+    query: null,
+    mealType: null,
+  });
+
   useEffect(() => {
-    dispatch(fetchRecipesApi());
+    dispatch(fetchRecipesApi(queries, setLoading));
   }, [dispatch]);
 
-  const handleSearch = () => {
-    // Filter recipes based on the search term
-    //   const filteredRecipes = recipes.filter((recipe) =>
-    //     recipe.label.toLowerCase().includes(searchTerm.toLowerCase())
-    //   );
-    //   // Update the UI with filtered recipes
-    //   setFilteredRecipes(filteredRecipes);
+  const handleFilter = () => {
+    setIsFilterOpen((pre) => !pre);
   };
 
-  const handleResetSearch = () => {
-    // Reset search term and display all recipes
-    // setSearchTerm("");
-    // setFilteredRecipes(recipes);
+  const handleNext = () => {
+    setLoading(true)
+    dispatch(fetchRecipesApi(queries, setLoading, nextUrl));
+  };
+  const handleCloseFilter = () => {
+    setIsFilterOpen(false);
   };
 
-  // State to hold filtered recipes
-  // const [filteredRecipes, setFilteredRecipes] = useState(recipes);
+  useDebouncedEffect(
+    () => {
+      dispatch(fetchRecipesApi(queries, setLoading));
+    },
+    3000,
+    [queries.query]
+  );
 
   return (
-    <div>
+    <div className="container">
       <h2>Recipe List</h2>
-      <div>
-        <input
-          type="text"
-          placeholder="Search recipes"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button onClick={handleSearch}>Search</button>
-        <button onClick={handleResetSearch}>Reset</button>
-      </div>
-      {recipes?.map((recipe) => (
-        <div key={recipe.id}>
-          <img src={recipe.image} alt={recipe.label} />
-          <h3>{recipe.label}</h3>
-          <p>{recipe.source}</p>
-          {/* Add more details as needed */}
+      <div className="search-filter-wrapper">
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="Search recipes"
+            value={queries.query}
+            onChange={(e) =>
+              setQueries((pre) => ({ ...pre, query: e.target.value }))
+            }
+          />
+          {/* <button onClick={handleSearch}>Search</button> */}
         </div>
-      ))}
+        <div className="filter-container">
+          <div className="buttonwrapper">
+            <button className="filter-btn" onClick={handleFilter}>
+            <FilterListIcon className="icon" /> Filter
+            </button>
+          </div>
+          {isFilterOpen && (
+            <FilterModal
+              handleClose={handleCloseFilter}
+              queries={queries}
+              setQueries={setQueries}
+            />
+          )}
+        </div>
+      </div>
+      <div className="recipe-list-container">
+        {loading ? (
+          <>
+            {[...Array(10)].map((x, index) => (
+              <div className="recipe-card" key={index + 2}>
+                <Stack spacing={1}>
+                  <Skeleton variant="text"  width={300} height={300} />
+                </Stack>
+                <Stack spacing={1} sx={{padding: '10px'}}>
+                  <Skeleton
+                    variant="text"
+                    sx={{ fontSize: "1rem", width: { xs: '100%', sm: '75%', md: '75%', lg: '75%' } }}
+                  />
+                  <Skeleton
+                    variant="text"
+                    sx={{ fontSize: "1rem", width: { xs: '100%', sm: '25%', md: '25%', lg: '25%' } }}
+                  />
+                </Stack>
+              </div>
+            ))}
+          </>
+        ) : (
+          recipes?.hits?.map((item, index) => (
+            <RecipeCard key={index} recipe={item.recipe} />
+          ))
+        )}
+      </div>
+      <div className="pagination">
+        <button onClick={handleNext} className="next-btn">Next</button>
+      </div>
     </div>
   );
 };

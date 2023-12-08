@@ -2,8 +2,10 @@ import { lazy } from "react";
 
 const HomeLayout = lazy(() => import("../container"))
 const RecipeList  = lazy(() => import("../pages/RecipeList"));
-//Dashboard Routes
-const DASHBOARD_ROUTES = [
+const Favorites = lazy(() => import("../pages/FavRecipelist"));
+const RecipeDetail  = lazy(() => import("../pages/RecipeDetail"));
+// Routes
+const HOME_ROUTES = [
     {
         index: true,
         element: <RecipeList />,
@@ -15,10 +17,18 @@ const MainRoutes = [
         element: <HomeLayout />,
 
         children: [
-            ...DASHBOARD_ROUTES,
+            ...HOME_ROUTES,
             {
                 path: "About",
                 element: <RecipeList />,
+            },
+            {
+                path: "favorites",
+                element: <Favorites />,
+              },
+            {
+                path: "recipe-detail",
+                element: <RecipeDetail />,
             },
             {
                 path: "*",
