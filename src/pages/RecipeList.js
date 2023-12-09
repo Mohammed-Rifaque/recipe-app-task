@@ -5,8 +5,8 @@ import { selectRecipes } from "../redux/slicers/recipeSlice";
 import RecipeCard from "./RecipeCard";
 import FilterModal from "./Modal/FilterModal";
 import useDebouncedEffect from "../hooks/useDebouncedEffect";
-import { Skeleton, Stack } from "@mui/material";
 import FilterListIcon from '@mui/icons-material/FilterList';
+import Skeleton from "../components/Skeleton";
 
 const RecipeList = () => {
   const dispatch = useDispatch();
@@ -63,7 +63,7 @@ const RecipeList = () => {
         <div className="filter-container">
           <div className="buttonwrapper">
             <button className="filter-btn" onClick={handleFilter}>
-            <FilterListIcon className="icon" /> Filter
+              <FilterListIcon className="icon" /> Filter
             </button>
           </div>
           {isFilterOpen && (
@@ -79,21 +79,7 @@ const RecipeList = () => {
         {loading ? (
           <>
             {[...Array(10)].map((x, index) => (
-              <div className="recipe-card" key={index + 2}>
-                <Stack spacing={1}>
-                  <Skeleton variant="text"  width={300} height={300} />
-                </Stack>
-                <Stack spacing={1} sx={{padding: '10px'}}>
-                  <Skeleton
-                    variant="text"
-                    sx={{ fontSize: "1rem", width: { xs: '100%', sm: '75%', md: '75%', lg: '75%' } }}
-                  />
-                  <Skeleton
-                    variant="text"
-                    sx={{ fontSize: "1rem", width: { xs: '100%', sm: '25%', md: '25%', lg: '25%' } }}
-                  />
-                </Stack>
-              </div>
+              <Skeleton />
             ))}
           </>
         ) : (
