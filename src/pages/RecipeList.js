@@ -6,7 +6,7 @@ import RecipeCard from "./RecipeCard";
 import FilterModal from "./Modal/FilterModal";
 import useDebouncedEffect from "../hooks/useDebouncedEffect";
 import FilterListIcon from '@mui/icons-material/FilterList';
-import Skeleton from "../components/Skeleton";
+import SkeletonCard from "../components/Skeleton";
 
 const RecipeList = () => {
   const dispatch = useDispatch();
@@ -79,7 +79,7 @@ const RecipeList = () => {
         {loading ? (
           <>
             {[...Array(10)].map((x, index) => (
-              <Skeleton />
+              <SkeletonCard />
             ))}
           </>
         ) : (
