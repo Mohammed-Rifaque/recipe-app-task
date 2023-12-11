@@ -7,6 +7,8 @@ import FilterModal from "./Modal/FilterModal";
 import useDebouncedEffect from "../hooks/useDebouncedEffect";
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SkeletonCard from "../components/Skeleton";
+import { InputAdornment, TextField } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 
 const RecipeList = () => {
   const dispatch = useDispatch();
@@ -50,14 +52,29 @@ const RecipeList = () => {
       <h2>Recipe List</h2>
       <div className="search-filter-wrapper">
         <div className="search-container">
-          <input
+          <TextField
+            type="text"
+            placeholder="Search recipes"
+            value={queries.query}
+            onChange={(e) =>
+              setQueries((prevQueries) => ({ ...prevQueries, query: e.target.value }))
+            }
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          {/*  <input
             type="text"
             placeholder="Search recipes"
             value={queries.query}
             onChange={(e) =>
               setQueries((pre) => ({ ...pre, query: e.target.value }))
             }
-          />
+          />*/}
           {/* <button onClick={handleSearch}>Search</button> */}
         </div>
         <div className="filter-container">
